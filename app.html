@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Idea Expansion</title>
+<style>
+  :root {
+    --bg: #faf8f5;
+    --ink: #1f1d1a;
+    --ink-soft: #5c574e;
+    --line: #e2ddd2;
+    --accent: #7a5c3e;
+    --accent-soft: #f1e9dd;
+    --serif: Georgia, 'Iowan Old Style', 'Palatino Linotype', Palatino, serif;
+    --sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; padding: 0; background: var(--bg); color: var(--ink);
+    font-family: var(--serif); line-height: 1.55;
+  }
+  #app { max-width: 760px; margin: 0 auto; padding: 32px 24px 120px; }
+
+  /* Phase indicator */
+  .phase-bar {
+    display: flex; gap: 0; align-items: center; justify-content: center;
+    margin-bottom: 40px; font-family: var(--sans); font-size: 12px;
+    letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft);
+  }
+  .phase-step { padding: 6px 14px; position: relative; }
+  .phase-step.active { color: var(--ink); font-weight: 600; }
+  .phase-step.done { color: var(--accent); }
+  .phase-sep { color: var(--line); }
+
+  h1.title { font-size: 22px; font-weight: 400; text-align: center; margin: 0 0 6px; }
+  p.sub { text-align: center; color: var(--ink-soft); font-family: var(--sans); font-size: 13px; margin: 0 0 36px; }
+
+  /* API key bar */
+  .keybar {
+    font-family: var(--sans); font-size: 12px; color: var(--ink-soft);
+    border: 1px solid var(--line); border-radius: 8px; padding: 10px 14px;
+    margin-bottom: 28px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+  }
+  .keybar input[type=password] {
+    flex: 1; min-width: 180px; font-family: var(--sans); font-size: 12px;
+    padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px; background: #fff;
+  }
+  .keybar button { font-family: var(--sans); font-size: 12px; }
+
+  /* Generic card */
+  .card {
+    background: #fff; border: 1px solid var(--line); border-radius: 10px;
+    padding: 24px; margin-bottom: 20px;
+  }
+  .card.dim { opacity: 0.55; }
+
+  textarea {
+    width: 100%; font-family: var(--serif); font-size: 16px; color: var(--ink);
+    border: 1px solid var(--line); border-radius: 8px; padding: 16px;
+    resize: vertical; min-height: 120px; background: #fff;
+  }
+  textarea:focus, input:focus { outline: 2px solid var(--accent-soft); border-color: var(--accent); }
+
+  button {
+    font-family: var(--sans); font-size: 13px; font-weight: 600;
+    background: var(--ink); color: #fff; border: none; border-radius: 7px;
+    padding: 10px 18px; cursor: pointer;
+  }
+  button.secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+  button.link { background: none; color: var(--accent); border: none; padding: 0; font-weight: 600; text-decoration: underline; cursor: pointer; }
+  button:disabled { opacity: 0.45; cursor: not-allowed; }
+  button:hover:not(:disabled) { filter: brightness(1.1); }
+
+  .row { display: flex; gap: 10px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+  .row.end { justify-content: flex-end; }
+  .row.between { justify-content: space-between; }
+
+  .label { font-family: var(--sans); font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); margin-bottom: 10px; }
+
+  /* Question loop */
+  .round-num { font-family: var(--sans); font-size: 11px; color: var(--ink-soft); margin-bottom: 14px; }
+  .question-item { margin-bottom: 18px; }
+  .question-item label { display: block; font-size: 16px; margin-bottom: 8px; }
+  .question-item input[type=text] {
+    width: 100%; font-family: var(--serif); font-size: 15px; padding: 10px 12px;
+    border: 1px solid var(--line); border-radius: 6px; background: #fdfcfa;
+  }
+
+  .gap-note { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); background: var(--accent-soft); border-radius: 6px; padding: 10px 12px; margin-top: 8px; }
+
+  /* Synthesis */
+  .synth-doc h2 { font-size: 13px; font-family: var(--sans); text-transform: uppercase; letter-spacing: 0.06em; color: var(--accent); border-bottom: 1px solid var(--line); padding-bottom: 8px; margin: 36px 0 16px; }
+  .synth-doc h2:first-child { margin-top: 0; }
+  .synth-doc p { font-size: 17px; }
+  .change-item { margin-bottom: 14px; font-size: 15px; }
+  .change-item .arrow-line { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); margin: 2px 0; }
+  .blind-spot { border-left: 3px solid var(--accent); padding-left: 14px; margin-bottom: 16px; }
+  .blind-spot .bs-text { font-size: 15px; }
+  .blind-spot .bs-why { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); margin-top: 4px; }
+  .bs-status { font-family: var(--sans); font-size: 12px; margin-top: 6px; }
+  .bs-status.integrated { color: var(--accent); }
+  ul.plain { padding-left: 20px; }
+  ul.plain li { margin-bottom: 8px; font-size: 15px; }
+  blockquote.original {
+    font-style: italic; color: var(--ink-soft); border-left: 3px solid var(--line);
+    padding-left: 16px; margin: 0; font-size: 15px;
+  }
+
+  .top-actions { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+
+  /* Roll-in */
+  .suggestion-card { border: 1px solid var(--line); border-radius: 10px; padding: 18px; margin-bottom: 14px; background: #fff; }
+  .suggestion-card.recommended { border-color: var(--accent); background: var(--accent-soft); }
+  .suggestion-card .sug-label { font-family: var(--sans); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; color: var(--accent); margin-bottom: 8px; }
+  .suggestion-card .sug-text { font-size: 16px; margin-bottom: 8px; }
+  .suggestion-card .sug-rationale { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); }
+  .suggestion-card .row { margin-top: 14px; }
+
+  .dialog-thread { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+  .dialog-msg { font-family: var(--sans); font-size: 14px; padding: 10px 14px; border-radius: 10px; max-width: 85%; }
+  .dialog-msg.user { align-self: flex-end; background: var(--ink); color: #fff; }
+  .dialog-msg.ai { align-self: flex-start; background: var(--accent-soft); color: var(--ink); }
+
+  .loading { font-family: var(--sans); font-size: 13px; color: var(--ink-soft); padding: 20px; text-align: center; }
+  .error-box { font-family: var(--sans); font-size: 13px; color: #9c3b3b; background: #fbeaea; border-radius: 6px; padding: 12px 14px; margin-bottom: 16px; }
+
+  .history-toggle { font-family: var(--sans); font-size: 12px; color: var(--ink-soft); cursor: pointer; text-decoration: underline; }
+
+  /* Busy indicator: per UILAYER.md ## 4, any async-triggering control shows
+     a spinning indicator on itself only, while other controls stay disabled. */
+  .spinner {
+    display: inline-block; width: 12px; height: 12px;
+    border: 2px solid rgba(255,255,255,0.4); border-top-color: #fff;
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    margin-right: 7px; vertical-align: -2px;
+  }
+  button.secondary .spinner, button.link .spinner {
+    border: 2px solid rgba(0,0,0,0.2); border-top-color: var(--ink);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+/* ---------------------------------------------------------------------
+   PROMPT.md is loaded verbatim as the system prompt, per BUILDENGINEER.md
+   ## 4 Build Trigger. Do not edit this string directly — edit PROMPT.md
+   and rebuild.
+--------------------------------------------------------------------- */
+const SYSTEM_PROMPT = "# Idea Expansion Agent — System Prompt\n\n> Source of truth for the app. This file is loaded as the system prompt verbatim.\n> Edit within your section only when possible — see `## 0. Editing Guide` for conventions\n> that keep diffs small and merge conflicts rare.\n\n---\n\n## 0. Editing Guide\n\n- Each `##` section is independent. Don't restructure another section to fix yours.\n- Within a section, prefer one idea per bullet / one bullet per line. Never combine\n  edits into a single run-on paragraph — it causes line-level merge conflicts.\n- Adding to a list? Append at the end of the list, not alphabetically interleaved,\n  unless the list explicitly says \"keep alphabetized.\"\n- If you change behavior described in `## 1. Role & Purpose` or `## 2. Non-Goals`,\n  flag it in your PR description — those two sections are the contract every other\n  section depends on.\n- Bump `## 9. Changelog` with every substantive edit (one line, your initials, date).\n\n---\n\n## 1. Role & Purpose\n\nYou are an **idea expansion partner** for early-stage product ideas. The person you're\nworking with has a product concept in its infancy — a rough sketch, not a spec — and\nneeds help seeing the full shape of it before they commit to building anything.\n\nYour job is not to organize or prioritize what they already have. Your job is to:\n\n1. **Surface blind spots** — dimensions of the idea they haven't considered.\n2. **Expand divergently** — widen the surface area of the idea (adjacent use cases,\n   stakeholders, failure modes, market context, emotional/social dimensions) before\n   any narrowing happens.\n3. **Calibrate intent** — the way they first stated the idea is a rough draft of what\n   they actually mean. Through questioning, find the gap between what they said and\n   what they're really reaching for, and close it.\n4. **Synthesize what they can't finish alone** — assume the user can articulate part\n   of the idea but not all of it. You complete the picture using reasoning and\n   synthesis they couldn't have produced solo — including connections across domains,\n   precedents, and second-order consequences.\n\nThe product in question is *usually* digital, but treat that as a default assumption,\nnot a constraint — let the idea itself tell you what it wants to be.\n\n**Success is measured against one bar:** the final deliverable must be better, more\naccurate, clearer, more comprehensive, and more holistic than the user's original\nstatement of the idea. If you've only reorganized their words, you've failed.\n\n---\n\n## 2. Non-Goals\n\nExplicitly out of scope. Do not let the conversation drift into these:\n\n- **Not a prioritization tool.** Do not rank, sequence, or triage an existing roadmap.\n  If the user already has a roadmap and asks you to prioritize it, that's a different\n  tool — redirect them rather than attempting it here.\n- **Not rapid/lightweight prototyping.** Do not rush to a single \"lightly intentional\"\n  answer. Depth and divergence come before convergence. Resist the urge to wrap up\n  after one or two questions.\n- **Not validation theater.** Don't just affirm the idea is good. Your value is in\n  finding what's missing, not in cheerleading.\n- **Not a replacement for the user's voice.** You expand and clarify intent — you\n  don't replace it with a generic \"best practice\" idea that isn't theirs anymore.\n\n---\n\n## 3. User Flow (must be followed in order)\n\n1. **Intake.** User states their idea, in whatever form it arrives (a sentence, a\n   paragraph, a fragment). Do not critique or expand yet.\n2. **Interactive question loop.** Ask questions in small batches (see `## 4. Question\n   Bank`), one round at a time — never the whole bank at once. After each round of\n   answers, decide whether you have enough surface area, or need another round.\n   - Keep looping until you've covered breadth (see `## 5. Coverage Checklist`) —\n     not a fixed number of rounds.\n   - It's OK, and expected, for your questions to introduce framings or possibilities\n     the user hasn't mentioned — that's the divergent-expansion job, not scope creep.\n   - Let the user end the loop early if they explicitly say so, but tell them what\n     coverage gaps remain if they do.\n3. **Synthesis.** Once coverage is sufficient, stop asking questions and produce the\n   deliverable (see `## 6. Output Format`).\n4. **Comparison.** Always close by showing the user's *original* idea statement\n   verbatim, side by side with the new synthesis, so the delta is visible.\n5. **Blind Spot Roll-In (optional, repeatable).** Synthesis is not necessarily\n   terminal. The user may choose to integrate any individual item from \"Blind\n   Spots Surfaced\" back into the idea — see `## 6a. Blind Spot Roll-In` for the\n   behavior this triggers. Each roll-in produces an updated Synthesis document;\n   the user can roll in any number of remaining blind spots, one at a time.\n\nDo not skip straight from intake to synthesis. Do not ask questions forever without\nconverging — watch the coverage checklist.\n\n---\n\n## 4. Question Bank\n\nOrganized by theme. Pull from across themes each round rather than exhausting one\ntheme before moving to the next — this keeps the questioning feeling exploratory\nrather than like a form. Add new questions to the end of a theme's list; don't\nrenumber existing ones.\n\n> Editing convention: each theme is its own sub-list. Add/edit within your theme\n> to avoid colliding with someone else's additions.\n\n### 4.1 Who & Why\n- Who is this for, specifically — not \"everyone,\" but the person in the moment of need?\n- What is the user doing right before and right after they'd use this?\n- Who is affected by this idea but isn't the direct user (payers, bystanders, teams)?\n- What does the user believe about themselves or their problem that this idea has to be compatible with?\n\n### 4.2 Problem Space\n- What is the actual pain — is it time, money, anxiety, status, coordination, trust?\n- What happens today, with no solution at all? What's the workaround?\n- Is this problem getting better or worse on its own, independent of you solving it?\n- What's adjacent to this problem that you're implicitly choosing not to solve?\n\n### 4.3 Shape & Form\n- Why does this need to be digital? What would the non-digital version look like?\n- Is this a tool, a service, a habit, an environment, a community, an object?\n- What's the smallest version of this that would still be recognizably \"it\"?\n- What's the most expansive version of this you'd be excited by, even if it scares you?\n\n### 4.4 Context & Forces\n- What else exists in this space already, even informally (not just direct competitors)?\n- What cultural, economic, or technological shift makes this newly possible or newly necessary?\n- Who would be threatened by this idea succeeding?\n- What constraints (regulatory, technical, social) does this have to survive contact with?\n\n### 4.5 Emotional & Identity Layer\n- How does the user want to feel before/during/after using this?\n- What would using this say about the user, to themselves or to others?\n- Is there a version of this that's purely functional vs. one that carries meaning — which are you actually drawn to?\n\n### 4.6 Edges & Failure\n- What does this look like if it's wildly misused?\n- What's the most embarrassing way this could fail?\n- What would make someone churn after loving it initially?\n\n---\n\n## 5. Coverage Checklist\n\nBefore moving to synthesis, confirm — internally, don't show this as a checklist to\nthe user — that you have enough material to speak to:\n\n- [ ] A specific user/persona and moment of need (not a generic audience)\n- [ ] The real underlying problem, distinct from the surface request\n- [ ] At least one blind spot the user explicitly hadn't considered before this conversation\n- [ ] The form factor and why it fits (or a deliberate reconsideration of form)\n- [ ] Surrounding context: adjacent solutions, timing, forces at play\n- [ ] The emotional/identity dimension, even briefly\n- [ ] At least one failure mode or edge case\n\nIf two or more boxes are still empty after a round of questions, run another round\ntargeting specifically those gaps rather than asking generic follow-ups.\n\n---\n\n## 6. Output Format\n\nProduce the synthesis as a single structured document with these parts, in order.\nKeep headers stable — downstream tooling/people may key off these exact names.\n\n1. **Refined Idea Statement** — one tight paragraph stating what the idea actually\n   is now, calibrated to the user's true intent (not just their original wording).\n2. **What Changed and Why** — a short list mapping original framing → refined framing,\n   with the reasoning, so the user can see your synthesis isn't arbitrary.\n3. **Blind Spots Surfaced** — the specific things the user hadn't considered, named\n   plainly, each with one sentence on why it matters.\n4. **Expanded Surface Area** — the new dimensions/angles uncovered (adjacent use cases,\n   stakeholders, forms, contexts) organized as a short list, not buried in prose.\n5. **Open Tensions** — places where the idea still has unresolved trade-offs or\n   forks; don't fake resolution where none exists yet.\n6. **Your Original Idea (Unedited)** — the user's first statement, quoted verbatim,\n   for direct comparison.\n\n---\n\n## 6a. Blind Spot Roll-In\n\nA user may select any single item from \"Blind Spots Surfaced\" and ask to integrate\nit into the current idea. This is a focused sub-flow, not a full re-run of the\nquestion loop.\n\n**Per blind spot, track one status:** `open` or `integrated`. Once integrated,\ntreat that blind spot as resolved — don't re-surface it as open in later rounds\nor later synthesis documents.\n\nWhen a blind spot is rolled in:\n\n1. **Generate exactly 3 integration suggestions**, ordered by your own\n   recommendation (best first). Each suggestion should be concrete — a specific\n   way the blind spot reshapes or adds to the Refined Idea Statement, not a\n   restatement of the blind spot itself. Briefly justify the ranking.\n   - Format each under its own header, exactly: `Suggestion 1 (Recommended)`,\n     `Suggestion 2`, `Suggestion 3` — stable headers downstream tooling keys\n     off of, same convention as `## 6. Output Format`.\n2. **The user may:**\n   - **Accept one of the 3 directly.** Integrate it immediately — revise the\n     Refined Idea Statement and any other affected Synthesis sections to reflect\n     it, mark that blind spot `integrated`, and return the full updated Synthesis\n     document.\n   - **Give feedback instead.** Open a short dialog: respond to the feedback,\n     refine the integration approach, and keep iterating until the user signals\n     they're ready to accept. Then integrate as above, exactly as if they'd\n     accepted one of the original 3 — there is no separate \"approve the\n     feedback version\" step beyond the user saying they're satisfied.\n3. **Only one blind spot is integrated per roll-in.** If the user wants to roll\n   in another, repeat this process for that item; each roll-in should account\n   for blind spots already integrated, so suggestions don't contradict or\n   duplicate prior integrations.\n\nThe output of a roll-in is always a complete, re-rendered Synthesis document\n(per `## 6. Output Format`) — never a fragment or diff-only response.\n\n---\n\n## 7. Tone & Behavior\n\n- Be a thinking partner, not an interviewer reading a script — questions should feel\n  responsive to what was just said, even when pulled from `## 4. Question Bank`.\n- Challenge gently but directly. If the idea as stated seems to contradict itself or\n  avoid the hard part, say so.\n- Don't pad with affirmations (\"Great idea!\") — spend that space on substance.\n- It is acceptable, and expected, to introduce concepts/precedents/analogies from\n  outside the user's stated domain if they genuinely expand the idea's surface area.\n- Never let the loop run on autopilot — each question should justify itself by what\n  it could reveal, not just fill a slot in the bank.\n\n---\n\n## 8. Example Interaction Sketch (non-binding, illustrative only)\n\nThis section is for onboarding new contributors to the prompt's intent — it is not\ninstruction text the model should imitate verbatim.\n\n```\nUser: \"An app that reminds people to call their parents.\"\n\nRound 1 questions might probe: who initiates today without the app, what's the\nactual barrier (forgetting? guilt? not knowing what to say?), what does \"calling\"\neven mean here (voice? could it be something else?), what does a missed call mean\nemotionally to each side.\n\nAfter 2-3 rounds, synthesis might surface that the real idea is closer to\n\"a low-friction ritual for sustaining intergenerational connection,\" with blind\nspots like: the parent's side of the experience was never considered, the guilt-\nbased framing could backfire, and \"calling\" may not be the right modality at all\nfor the actual underlying need.\n```\n\n---\n\n## 9. Changelog\n\n- 2026-06-17 — initial version drafted.\n- 2026-06-22 — added Blind Spot Roll-In sub-flow (`## 6a`) and made Synthesis\n  non-terminal in the user flow.\n- 2026-06-22 — added explicit suggestion header format to `## 6a` (build-time\n  parseability requirement, no behavior change).\n";
+
+/* ---------------------------------------------------------------------
+   JSON-envelope instructions. These do not alter PROMPT.md's behavior —
+   they tell the model what wire format to use so this UI can parse phase
+   transitions. Appended to user turns, never to the system prompt itself.
+--------------------------------------------------------------------- */
+const ENVELOPE_INSTRUCTIONS = `
+---
+INTEGRATION NOTE (from the application shell, not part of your behavioral spec):
+Respond with ONLY a single JSON object (no prose outside it, no markdown fences) matching one of these shapes, depending on where the conversation is:
+
+1. Asking a round of questions:
+{"phase":"questions","questions":["q1","q2","q3","q4"],"coverage_note": "<string, ONLY include this key if you judge coverage is now sufficient to end the loop here — a one-line summary of what's still uncovered if the user stops now>"}
+
+2. Producing the Synthesis deliverable:
+{"phase":"synthesis","refined_idea":"...","what_changed":[{"original":"...","refined":"...","reasoning":"..."}],"blind_spots":[{"id":"bs1","text":"...","why":"...","status":"open"}],"expanded_surface_area":["...","..."],"open_tensions":["...","..."],"original_idea":"<verbatim original idea text>"}
+Each blind_spots item needs a stable short id (bs1, bs2, ...). status is "open" or "integrated".
+
+3. Generating the 3 Blind Spot Roll-In suggestions for one blind spot:
+{"phase":"rollin_suggestions","blind_spot_id":"<id>","suggestions":[{"label":"Suggestion 1 (Recommended)","text":"...","rationale":"..."},{"label":"Suggestion 2","text":"...","rationale":"..."},{"label":"Suggestion 3","text":"...","rationale":"..."}]}
+
+4. Replying inside the Roll-In feedback dialog (not yet finalized):
+{"phase":"rollin_dialog","message":"..."}
+
+5. Finalizing a Roll-In (after direct accept, or after the user signals satisfaction in the feedback dialog) — return a full updated Synthesis document, phase "synthesis", with the rolled-in blind spot's status set to "integrated" and all sections revised accordingly.
+
+Always pick exactly one shape. Keep all your actual reasoning, tone, and judgment governed by your system prompt above — this note only fixes the output format.`;
+
+/* ---------------------------------------------------------------------
+   State
+--------------------------------------------------------------------- */
+const state = {
+  apiKey: localStorage.getItem('idea_expansion_api_key') || '',
+  phase: 'intake', // intake | questions | synthesis | rollin
+  messages: [], // full Anthropic message history (user/assistant), content = JSON strings for assistant turns
+  originalIdea: '',
+  rounds: [], // [{questions:[...], answers:[...], coverageNote}]
+  currentQuestions: null,
+  currentCoverageNote: null,
+  synthesis: null, // parsed synthesis object
+  rollin: null, // {blindSpotId, suggestions, dialog:[{role,text}]}
+  loading: false,
+  busyAction: null, // identifies which specific control triggered the in-flight call, so only that control spins
+  error: null,
+  showHistory: false,
+};
+
+function save() { localStorage.setItem('idea_expansion_api_key', state.apiKey); }
+
+/* ---------------------------------------------------------------------
+   Anthropic API call
+--------------------------------------------------------------------- */
+async function callModel(userText) {
+  state.messages.push({ role: 'user', content: userText + '\n' + ENVELOPE_INSTRUCTIONS });
+  state.loading = true; state.error = null; render();
+
+  try {
+    const resp = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': state.apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4096,
+        system: SYSTEM_PROMPT,
+        messages: state.messages,
+      }),
+    });
+
+    if (!resp.ok) {
+      const errBody = await resp.text();
+      throw new Error(`API error ${resp.status}: ${errBody.slice(0, 300)}`);
+    }
+
+    const data = await resp.json();
+    const textBlock = (data.content || []).find(b => b.type === 'text');
+    const raw = textBlock ? textBlock.text : '';
+    state.messages.push({ role: 'assistant', content: raw });
+
+    let parsed;
+    try {
+      const cleaned = raw.trim().replace(/^```json\s*/i, '').replace(/^```\s*/, '').replace(/```\s*$/, '');
+      parsed = JSON.parse(cleaned);
+    } catch (e) {
+      throw new Error('Could not parse model response as JSON: ' + e.message);
+    }
+    state.loading = false;
+    state.busyAction = null;
+    return parsed;
+  } catch (e) {
+    state.loading = false;
+    state.busyAction = null;
+    state.error = e.message;
+    render();
+    throw e;
+  }
+}
+
+function applyEnvelope(parsed) {
+  if (parsed.phase === 'questions') {
+    state.phase = 'questions';
+    state.currentQuestions = parsed.questions;
+    state.currentCoverageNote = parsed.coverage_note || null;
+  } else if (parsed.phase === 'synthesis') {
+    state.phase = 'synthesis';
+    state.synthesis = parsed;
+    state.rollin = null;
+  } else if (parsed.phase === 'rollin_suggestions') {
+    state.phase = 'rollin';
+    state.rollin = { blindSpotId: parsed.blind_spot_id, suggestions: parsed.suggestions, dialog: [] };
+  } else if (parsed.phase === 'rollin_dialog') {
+    if (state.rollin) {
+      state.rollin.dialog.push({ role: 'ai', text: parsed.message });
+    }
+  }
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   Actions — each sets state.busyAction immediately, before the await,
+   so the clicked control's spinner appears the instant it's clicked.
+--------------------------------------------------------------------- */
+async function submitIntake(ideaText) {
+  state.originalIdea = ideaText;
+  state.busyAction = 'submitIdea';
+  try {
+    const parsed = await callModel(
+      `My idea: ${ideaText}\n\nBegin the process per your Role & Purpose and User Flow. Start the interactive question loop with your first round of questions.`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+async function submitRound(answers) {
+  state.rounds.push({ questions: state.currentQuestions, answers, coverageNote: state.currentCoverageNote });
+  const answerText = state.currentQuestions.map((q, i) => `Q: ${q}\nA: ${answers[i] || '(no answer given)'}`).join('\n\n');
+  state.busyAction = 'submitRound';
+  try {
+    const parsed = await callModel(
+      `Here are my answers to round ${state.rounds.length}:\n\n${answerText}\n\nDecide whether you have enough coverage to move to Synthesis, or whether you need another round of questions.`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+async function endLoopEarly() {
+  state.rounds.push({ questions: state.currentQuestions, answers: [], coverageNote: state.currentCoverageNote, skipped: true });
+  state.busyAction = 'endLoop';
+  try {
+    const parsed = await callModel(
+      `I'd like to end the question loop now and move to Synthesis, even if coverage isn't complete. Produce the Synthesis deliverable, and account for the coverage gaps in how you frame Open Tensions where relevant.`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+async function startRollin(blindSpotId) {
+  const bs = state.synthesis.blind_spots.find(b => b.id === blindSpotId);
+  state.busyAction = 'rollin:' + blindSpotId;
+  try {
+    const parsed = await callModel(
+      `I want to roll in this blind spot: "${bs.text}" (id: ${blindSpotId}). Per ## 6a Blind Spot Roll-In, generate exactly 3 integration suggestions for it.`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+async function acceptSuggestion(suggestionIndex, suggestionText) {
+  state.busyAction = 'accept:' + suggestionIndex;
+  try {
+    const parsed = await callModel(
+      `I accept this integration suggestion directly: "${suggestionText}". Integrate it now per ## 6a step 2 — mark blind spot ${state.rollin.blindSpotId} as integrated and return the full updated Synthesis document.`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+async function sendRollinFeedback(feedbackText) {
+  state.rollin.dialog.push({ role: 'user', text: feedbackText });
+  state.busyAction = 'feedback';
+  render();
+  try {
+    const parsed = await callModel(
+      `Feedback on the roll-in suggestions for blind spot ${state.rollin.blindSpotId}: ${feedbackText}\n\nIf I'm signaling I'm satisfied/ready to accept, finalize the integration now (mark this blind spot integrated, return the full updated Synthesis document, phase "synthesis"). Otherwise, continue refining in the dialog (phase "rollin_dialog").`
+    );
+    applyEnvelope(parsed);
+  } catch (e) { render(); }
+}
+
+function abandonRollin() {
+  state.phase = 'synthesis';
+  state.rollin = null;
+  render();
+}
+
+/* ---------------------------------------------------------------------
+   Rendering
+--------------------------------------------------------------------- */
+function escapeHtml(s) {
+  const d = document.createElement('div');
+  d.textContent = s == null ? '' : String(s);
+  return d.innerHTML;
+}
+
+function spinnerLabel(label) {
+  return `<span class="spinner"></span>Working…`;
+}
+
+function renderPhaseBar() {
+  const steps = ['Intake', 'Questions', 'Synthesis'];
+  const activeIdx = state.phase === 'intake' ? 0 : (state.phase === 'questions' ? 1 : 2);
+  return `<div class="phase-bar">${steps.map((s, i) => {
+    const cls = i === activeIdx ? 'active' : (i < activeIdx ? 'done' : '');
+    return `<span class="phase-step ${cls}">${s}</span>` + (i < steps.length - 1 ? `<span class="phase-sep">&middot;</span>` : '');
+  }).join('')}</div>`;
+}
+
+function renderKeybar() {
+  return `
+  <div class="keybar">
+    <span>Anthropic API key (stored only in this browser):</span>
+    <input id="apiKeyInput" type="password" placeholder="sk-ant-..." value="${escapeHtml(state.apiKey)}" />
+    <button class="secondary" id="saveKeyBtn">Save</button>
+  </div>`;
+}
+
+function renderError() {
+  return state.error ? `<div class="error-box">${escapeHtml(state.error)}</div>` : '';
+}
+
+function renderHistory() {
+  if (state.rounds.length === 0) return '';
+  const toggle = `<div class="row"><span class="history-toggle" id="historyToggle">${state.showHistory ? 'Hide' : 'Show'} prior rounds (${state.rounds.length})</span></div>`;
+  if (!state.showHistory) return toggle;
+  const items = state.rounds.map((r, i) => `
+    <div class="card dim">
+      <div class="round-num">Round ${i + 1}${r.skipped ? ' (skipped)' : ''}</div>
+      ${r.questions.map((q, qi) => `<div class="question-item"><label>${escapeHtml(q)}</label><div style="font-size:14px;color:var(--ink-soft)">${escapeHtml(r.answers[qi] || '(no answer)')}</div></div>`).join('')}
+    </div>`).join('');
+  return toggle + items;
+}
+
+function renderIntake() {
+  return `
+  <h1 class="title">Idea Expansion</h1>
+  <p class="sub">State your idea, in whatever form it arrives.</p>
+  ${renderKeybar()}
+  ${renderError()}
+  <div class="card">
+    <div class="label">Your idea</div>
+    <textarea id="ideaInput" placeholder="A rough sketch is enough..."></textarea>
+    <div class="row end">
+      <button id="submitIdeaBtn" ${state.loading || !state.apiKey ? 'disabled' : ''}>${state.busyAction === 'submitIdea' ? spinnerLabel() : 'Begin'}</button>
+    </div>
+    ${!state.apiKey ? '<div class="gap-note">Add your API key above to begin.</div>' : ''}
+  </div>`;
+}
+
+function renderQuestions() {
+  const qs = state.currentQuestions || [];
+  return `
+  <h1 class="title">Idea Expansion</h1>
+  <p class="sub">Round ${state.rounds.length + 1} — answer what resonates, skip what doesn't.</p>
+  ${renderKeybar()}
+  ${renderError()}
+  ${renderHistory()}
+  <div class="card">
+    <div class="round-num">Round ${state.rounds.length + 1}</div>
+    ${qs.map((q, i) => `
+      <div class="question-item">
+        <label>${escapeHtml(q)}</label>
+        <input type="text" data-qidx="${i}" class="answerInput" />
+      </div>`).join('')}
+    ${state.currentCoverageNote ? `<div class="gap-note">Coverage looks sufficient. Remaining gap if you stop: ${escapeHtml(state.currentCoverageNote)}</div>` : ''}
+    <div class="row between">
+      <button class="secondary" id="endLoopBtn" ${state.loading ? 'disabled' : ''}>${state.busyAction === 'endLoop' ? spinnerLabel() : 'End loop now &amp; synthesize'}</button>
+      <button id="submitRoundBtn" ${state.loading ? 'disabled' : ''}>${state.busyAction === 'submitRound' ? spinnerLabel() : 'Submit round'}</button>
+    </div>
+  </div>`;
+}
+
+function renderSynthesis() {
+  const s = state.synthesis;
+  if (!s) return '<div class="loading">Loading…</div>';
+  return `
+  <h1 class="title">Synthesis</h1>
+  ${renderKeybar()}
+  ${renderError()}
+  <div class="top-actions">
+    <span class="label" style="margin:0">Your refined idea</span>
+    <button class="secondary" id="copyBtn">Copy document</button>
+  </div>
+  <div class="card synth-doc" id="synthDoc">
+    <h2>Refined Idea Statement</h2>
+    <p>${escapeHtml(s.refined_idea)}</p>
+
+    <h2>What Changed and Why</h2>
+    ${(s.what_changed || []).map(c => `
+      <div class="change-item">
+        <div class="arrow-line">${escapeHtml(c.original)} &rarr; ${escapeHtml(c.refined)}</div>
+        <div>${escapeHtml(c.reasoning)}</div>
+      </div>`).join('')}
+
+    <h2>Blind Spots Surfaced</h2>
+    ${(s.blind_spots || []).map(b => `
+      <div class="blind-spot">
+        <div class="bs-text">${escapeHtml(b.text)}</div>
+        <div class="bs-why">${escapeHtml(b.why)}</div>
+        ${b.status === 'integrated'
+          ? `<div class="bs-status integrated">This has been integrated.</div>`
+          : `<div class="bs-status"><button class="link rollinBtn" data-bsid="${b.id}" ${state.loading ? 'disabled' : ''}>${state.busyAction === 'rollin:' + b.id ? spinnerLabel() : 'Roll this into my idea'}</button></div>`}
+      </div>`).join('')}
+
+    <h2>Expanded Surface Area</h2>
+    <ul class="plain">${(s.expanded_surface_area || []).map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>
+
+    <h2>Open Tensions</h2>
+    <ul class="plain">${(s.open_tensions || []).map(x => `<li>${escapeHtml(x)}</li>`).join('')}</ul>
+
+    <h2>Your Original Idea (Unedited)</h2>
+    <blockquote class="original">${escapeHtml(s.original_idea)}</blockquote>
+  </div>`;
+}
+
+function renderRollin() {
+  const r = state.rollin;
+  if (!r) return '<div class="loading">Loading…</div>';
+  const bs = state.synthesis.blind_spots.find(b => b.id === r.blindSpotId);
+  return `
+  <h1 class="title">Roll In Blind Spot</h1>
+  <p class="sub">${escapeHtml(bs ? bs.text : '')}</p>
+  ${renderKeybar()}
+  ${renderError()}
+  <div class="row"><button class="secondary" id="abandonRollinBtn">&larr; Back to Synthesis (no changes)</button></div>
+  <div style="margin-top:20px">
+    ${r.suggestions.map((s, i) => `
+      <div class="suggestion-card ${i === 0 ? 'recommended' : ''}">
+        <div class="sug-label">${escapeHtml(s.label)}</div>
+        <div class="sug-text">${escapeHtml(s.text)}</div>
+        <div class="sug-rationale">${escapeHtml(s.rationale)}</div>
+        <div class="row">
+          <button class="acceptBtn" data-idx="${i}" data-text="${escapeHtml(s.text)}" ${state.loading ? 'disabled' : ''}>${state.busyAction === 'accept:' + i ? spinnerLabel() : 'Accept this'}</button>
+        </div>
+      </div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="label">Or give feedback instead</div>
+    <div class="dialog-thread">
+      ${r.dialog.map(m => `<div class="dialog-msg ${m.role}">${escapeHtml(m.text)}</div>`).join('')}
+    </div>
+    <textarea id="feedbackInput" placeholder="Tell the AI what you'd change about these suggestions..." style="min-height:80px"></textarea>
+    <div class="row end">
+      <button id="sendFeedbackBtn" ${state.loading ? 'disabled' : ''}>${state.busyAction === 'feedback' ? spinnerLabel() : 'Send'}</button>
+    </div>
+  </div>`;
+}
+
+function render() {
+  const app = document.getElementById('app');
+  let body = '';
+  if (state.phase === 'intake') body = renderIntake();
+  else if (state.phase === 'questions') body = renderQuestions();
+  else if (state.phase === 'synthesis') body = renderSynthesis();
+  else if (state.phase === 'rollin') body = renderRollin();
+
+  app.innerHTML = renderPhaseBar() + body;
+  wireEvents();
+}
+
+function wireEvents() {
+  const saveKeyBtn = document.getElementById('saveKeyBtn');
+  if (saveKeyBtn) saveKeyBtn.onclick = () => {
+    state.apiKey = document.getElementById('apiKeyInput').value.trim();
+    save(); render();
+  };
+
+  const submitIdeaBtn = document.getElementById('submitIdeaBtn');
+  if (submitIdeaBtn) submitIdeaBtn.onclick = () => {
+    const text = document.getElementById('ideaInput').value.trim();
+    if (!text) return;
+    submitIntake(text);
+  };
+
+  const submitRoundBtn = document.getElementById('submitRoundBtn');
+  if (submitRoundBtn) submitRoundBtn.onclick = () => {
+    const inputs = document.querySelectorAll('.answerInput');
+    const answers = Array.from(inputs).map(i => i.value.trim());
+    submitRound(answers);
+  };
+
+  const endLoopBtn = document.getElementById('endLoopBtn');
+  if (endLoopBtn) endLoopBtn.onclick = () => endLoopEarly();
+
+  const historyToggle = document.getElementById('historyToggle');
+  if (historyToggle) historyToggle.onclick = () => { state.showHistory = !state.showHistory; render(); };
+
+  const copyBtn = document.getElementById('copyBtn');
+  if (copyBtn) copyBtn.onclick = () => {
+    const doc = document.getElementById('synthDoc');
+    navigator.clipboard.writeText(doc.innerText).then(() => {
+      copyBtn.textContent = 'Copied!';
+      setTimeout(() => { copyBtn.textContent = 'Copy document'; }, 1500);
+    });
+  };
+
+  document.querySelectorAll('.rollinBtn').forEach(btn => {
+    btn.onclick = () => startRollin(btn.dataset.bsid);
+  });
+
+  const abandonRollinBtn = document.getElementById('abandonRollinBtn');
+  if (abandonRollinBtn) abandonRollinBtn.onclick = () => abandonRollin();
+
+  document.querySelectorAll('.acceptBtn').forEach(btn => {
+    btn.onclick = () => acceptSuggestion(btn.dataset.idx, btn.dataset.text);
+  });
+
+  const sendFeedbackBtn = document.getElementById('sendFeedbackBtn');
+  if (sendFeedbackBtn) sendFeedbackBtn.onclick = () => {
+    const text = document.getElementById('feedbackInput').value.trim();
+    if (!text) return;
+    sendRollinFeedback(text);
+  };
+}
+
+render();
+</script>
+</body>
+</html>
