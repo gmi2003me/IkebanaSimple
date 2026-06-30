@@ -33,7 +33,7 @@ This prompt covers **layout, phase states, and interaction patterns only.** The
 content the AI produces (questions, synthesis, etc.) is governed entirely by
 `PROMPT.md` — this file should accommodate that behavior without re-describing it.
 
-The session always moves through four phases, in this order:
+The session always moves through five phases, in this order:
 
 1. **Intake** — the user states their idea, raw, in whatever form it arrives.
    No critique or expansion happens yet — this is just capture.
@@ -45,6 +45,9 @@ The session always moves through four phases, in this order:
    surface area, open tensions).
 4. **Comparison** — the last section of that same deliverable is the user's
    original idea, quoted verbatim, so the delta is visible without scrolling back.
+5. **Success Metrics** — the user defines one North Star Metric and exactly three
+   KPIs, guided by AI recommendations drawn from the session, ending in a
+   read-only summary screen.
 
 **Success is measured against one bar:** someone unfamiliar with the product
 should be able to use the UI and always know which phase they're in, what's
@@ -80,11 +83,14 @@ Explicitly out of scope. Do not let the design drift into these:
    considered screen in the app; the content is the centerpiece.
 4. **Comparison** — not a separate screen; the final section *within* Synthesis,
    visually marked as a quoted/verbatim artifact distinct from the AI's prose.
+5. **Success Metrics** — a two-part guided selection flow (North Star Metric,
+   then KPIs), followed by a terminal summary screen. Entered from Synthesis
+   once the user is done with any Roll-Ins; does not return to Synthesis.
 
 Synthesis also supports an optional, repeatable **Blind Spot Roll-In sub-flow**
-(see `## 5.4`) — a branch off Synthesis, not a fifth phase. The four phases
-above remain the only top-level phases; Roll-In always returns to Synthesis
-when it concludes.
+(see `## 5.4`) — a branch off Synthesis, not a top-level phase. Roll-In always
+returns to Synthesis when it concludes; Success Metrics is entered from Synthesis
+after all Roll-Ins are complete.
 
 Each phase transition should feel like a deliberate hand-off — something closes
 (the prior phase ends) and something opens (the next phase begins) — never a
@@ -95,7 +101,8 @@ silent continuation that leaves the user unsure which phase they're in.
 ## 4. Persistent UI Elements
 
 - Lightweight, always-visible indication of current phase (Intake / Questions /
-  Synthesis), so the user knows where they are and roughly how much remains.
+  Synthesis / Success Metrics), so the user knows where they are and roughly
+  how much remains.
 - A way to see prior rounds/history without losing focus on the current phase.
 - During the Question Loop, a visible (not buried) way to end the loop early,
   paired with a note about what coverage gaps remain if the user does so.
@@ -112,6 +119,16 @@ silent continuation that leaves the user unsure which phase they're in.
 
 ### 5.1 Intake
 - One freeform input affordance. No structure imposed on how the idea is typed.
+- A **"Create an idea"** link sits inline with the "Your idea" field label,
+  right-aligned on the same row.
+- Clicking it invokes the AI per `## 6c. Idea Suggestion` (PROMPT.md) and
+  fills the textarea with the returned single-sentence idea.
+- Repeated clicks replace the previous content — the textarea is always
+  overwritten, never appended to.
+- The link shows the standard busy/spinner state (per `## 4`) while the call
+  is in-flight; the Submit button remains disabled during that time.
+- The generated idea is editable — the user may modify it freely after it
+  appears before clicking Begin.
 
 ### 5.2 Question Loop
 - A grouped-answer input: the user answers a full batch of questions, then
@@ -125,6 +142,52 @@ silent continuation that leaves the user unsure which phase they're in.
 - Each item in "Blind Spots Surfaced" carries one of two states: a "Roll this
   into my idea" link, or, once resolved, a quiet status note reading "This has
   been integrated." Never show both for the same item.
+
+### 5.5 Success Metrics
+
+The Success Metrics phase has three sequential screens: North Star Metric
+selection, KPI selection, and a final summary. A persistent "Step X of 3"
+indicator within this phase (NSM = step 1, KPIs = step 2, Summary = step 3)
+tells the user where they are inside Success Metrics independently of the
+top-level phase indicator.
+
+**North Star Metric screen**
+- Display 3 AI-recommended NSM cards in a ranked list (best-fit first).
+- Below the cards, an open text input for the user to enter their own candidate.
+- Each card, and the user's submitted text entry, shows two actions:
+  - **"Use this"** — prominent primary action; confirms this as the NSM and
+    advances to the KPI screen immediately.
+  - **"Refine"** — secondary action; expands an inline text box beneath that
+    card only. The user types refinement notes and submits. The card updates
+    in place to show the revised metric; the same two actions reappear.
+    Repeat until "Use this" is clicked. No limit on refinement rounds.
+- Only one refinement box is open at a time; opening one collapses any other.
+- The user's own text input follows the same "Use this" / "Refine" pattern
+  once they submit it.
+
+**KPI screen**
+- Display 5 AI-recommended KPI cards, ordered by relevance (most relevant
+  first). Each shows its rationale inline, visible without any click.
+- Below the cards, an open text input for the user to enter their own
+  candidate KPI.
+- Each card and any user-submitted entry shows two actions:
+  - **"Use this"** — adds the KPI to the selected set; the card moves to a
+    "selected" visual state. The running count updates immediately (e.g.
+    "1 of 3 selected").
+  - **"Refine"** — same inline expansion pattern as the NSM screen; card
+    updates in place on submission; "Use this" / "Refine" reappear.
+- A selected KPI shows a **"Remove"** action in place of "Use this," so the
+  user can de-select before the count reaches 3.
+- Once 3 KPIs are selected, all remaining unselected cards and the text input
+  are visually disabled (not hidden). The phase advances to the summary screen
+  automatically, with no separate confirm step.
+
+**Summary screen**
+- Read-only. Shows:
+  - North Star Metric, clearly labeled, in a visually prominent treatment.
+  - Three KPIs listed in selection order, numbered, below the NSM.
+- A copy/export action for the full summary content.
+- This is the terminal state of the session. No navigation forward is offered.
 
 ### 5.4 Blind Spot Roll-In (sub-flow off Synthesis)
 - Clicking "Roll this into my idea" navigates to a dedicated Roll-In page —
@@ -170,6 +233,18 @@ silent continuation that leaves the user unsure which phase they're in.
 - Returning to a past session, if applicable
 - Busy/in-flight state on a clicked control, immediately on click and until
   the triggered action resolves
+- Success Metrics — NSM screen: 3 candidate cards + open text input, all
+  unselected
+- Success Metrics — NSM refinement in progress: one card's inline text box
+  open, revised metric displayed, awaiting "Use this"
+- Success Metrics — KPI screen: 5 candidate cards + open text input, running
+  count at 0 of 3
+- Success Metrics — KPI screen mid-selection: 1 or 2 KPIs selected, count
+  updated, remaining cards still active
+- Success Metrics — KPI refinement in progress: one card's inline text box
+  open, revised KPI displayed
+- Success Metrics — summary screen: NSM + 3 KPIs, read-only, copy/export
+  action available, terminal state
 
 ---
 
@@ -205,3 +280,7 @@ A copy/export control sits at the top or bottom of the document.
   Layout note and States to Account For accordingly.
 - 2026-06-22 — added busy/spinner indicator requirement for async-triggering
   controls (`## 4`, `## 7`).
+- 2026-06-29 — added Success Metrics as fifth phase; updated `## 1`, `## 3`,
+  `## 4`, `## 7`; added `## 5.5` with NSM screen, KPI screen, and summary
+  screen interaction specs.
+- 2026-06-29 — added "Create an idea" link spec to `## 5.1 Intake`.
