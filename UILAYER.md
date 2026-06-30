@@ -129,6 +129,15 @@ silent continuation that leaves the user unsure which phase they're in.
   is in-flight; the Submit button remains disabled during that time.
 - The generated idea is editable — the user may modify it freely after it
   appears before clicking Begin.
+- A **"Simple language"** toggle sits in the intake card, below the textarea,
+  left-aligned. Default state is off.
+  - When on, Simple Language Mode (per `## 6d`, PROMPT.md) is active for the
+    entire session — every AI call appends an instruction to apply it.
+  - The toggle is only shown on the Intake screen. Once the session begins
+    (user clicks Begin), the mode is locked for that session and the toggle
+    is no longer visible.
+  - The toggle label reads "Simple language" — no tooltip, no explanation
+    needed.
 
 ### 5.2 Question Loop
 - A grouped-answer input: the user answers a full batch of questions, then
@@ -245,6 +254,10 @@ top-level phase indicator.
   open, revised KPI displayed
 - Success Metrics — summary screen: NSM + 3 KPIs, read-only, copy/export
   action available, terminal state
+- Simple language toggle off (default): toggle visible on Intake screen,
+  unchecked
+- Simple language toggle on: toggle checked, mode active for entire session;
+  toggle not shown after Begin is clicked
 
 ---
 
@@ -284,3 +297,5 @@ A copy/export control sits at the top or bottom of the document.
   `## 4`, `## 7`; added `## 5.5` with NSM screen, KPI screen, and summary
   screen interaction specs.
 - 2026-06-29 — added "Create an idea" link spec to `## 5.1 Intake`.
+- 2026-06-29 — added Simple language toggle spec to `## 5.1 Intake` and
+  two new states to `## 7`.
