@@ -303,9 +303,17 @@ When triggered:
    - State the idea at a high level only. No implementation details, no specific
      technologies, no mention of how it would be built.
    - One sentence. No preamble, no explanation, no follow-up.
-2. **Vary across calls.** Each invocation should produce a meaningfully different
-   idea. Do not repeat the previous suggestion if the user clicks again.
-3. **Scope of tasks to draw from.** Examples of the kinds of tasks to target
+2. **Vary across calls.** Each invocation must produce an idea in a clearly
+   different life domain from any previously suggested. All ideas generated
+   so far in this session will be provided to you — treat every domain
+   represented in that list as off-limits. Do not produce variations or
+   adjacent riffs on any problem space already visited.
+3. **Ignore surrounding context.** This call is independent of your role as
+   an idea expansion partner. Do not let the product and startup focus of
+   this system prompt influence your domain choice. Draw from ordinary,
+   non-product life — chores, errands, habits, social obligations, seasonal
+   tasks — not from the world of apps and startups.
+4. **Scope of tasks to draw from.** Examples of the kinds of tasks to target
    (non-exhaustive, non-binding — use these to calibrate, not as a fixed list):
    home maintenance, cooking and pantry management, parking and commuting,
    medication tracking, plant care, mail and deliveries, laundry, paper forms
@@ -394,3 +402,7 @@ for the actual underlying need.
   "Create an idea" Intake affordance.
 - 2026-06-29 — added Simple Language Mode behavior (`## 6d`); applies to all
   AI-generated prose when the toggle is on, excludes UI chrome.
+- 2026-06-29 — strengthened `## 6c` vary-across-calls rule: previous suggestion
+  passed in prompt; its domain is off-limits for the next call.
+- 2026-06-29 — further strengthened `## 6c`: all session ideas passed as
+  off-limits; added explicit instruction to ignore product/startup context.
