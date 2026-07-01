@@ -151,6 +151,10 @@ silent continuation that leaves the user unsure which phase they're in.
 - Each item in "Blind Spots Surfaced" carries one of two states: a "Roll this
   into my idea" link, or, once resolved, a quiet status note reading "This has
   been integrated." Never show both for the same item.
+- Each item in "Expanded Surface Area" carries the same two states as Blind
+  Spots: a "Roll this into my idea" link when not yet integrated, or a quiet
+  "This has been integrated." note once resolved. Never show both for the same
+  item.
 
 ### 5.5 Success Metrics
 
@@ -258,6 +262,9 @@ top-level phase indicator.
   unchecked
 - Simple language toggle on: toggle checked, mode active for entire session;
   toggle not shown after Begin is clicked
+- Expanded Surface Area items, all open: all showing "Roll this into my idea"
+- Expanded Surface Area items, mixed: some showing "Roll this into my idea,"
+  others showing "This has been integrated."
 
 ---
 
@@ -299,3 +306,5 @@ A copy/export control sits at the top or bottom of the document.
 - 2026-06-29 — added "Create an idea" link spec to `## 5.1 Intake`.
 - 2026-06-29 — added Simple language toggle spec to `## 5.1 Intake` and
   two new states to `## 7`.
+- 2026-06-30 — added Roll-In behavior to Expanded Surface Area items in
+  `## 5.3` and two new states to `## 7`.

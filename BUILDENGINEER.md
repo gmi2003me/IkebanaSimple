@@ -137,7 +137,27 @@ taking any build/deploy action:
 
 ---
 
-## 8. Changelog
+## 8. Editing Standards
+
+The source files (`PROMPT.md` and `UILAYER.md`) are prompts, not code. All edits
+to these files must follow these rules:
+
+- **No implementation details.** Do not specify variable names, function names,
+  data structures, status strings, JSON keys, or any other programming construct.
+  These belong in the build output, not the spec.
+- **Correct level of abstraction.** Describe what the system does and how the user
+  experiences it — not how it is built or how the code implements it.
+- **Propose before editing.** Always state exactly what you intend to change and
+  wait for explicit approval before touching any file.
+- **One concern per file.** `PROMPT.md` covers AI behavior only. `UILAYER.md`
+  covers UI and interaction only. `BUILDENGINEER.md` covers build and process only.
+  Never let content drift across files.
+
+---
+
+## 9. Changelog
 
 - 2026-06-22 — added explicit single-file requirement for the UI layer to
   `## 4. Build Trigger` (no separate component files/templates/stylesheets).
+- 2026-06-30 — added `## 8. Editing Standards` to codify Prompt As Artifact
+  editing rules for all source files.

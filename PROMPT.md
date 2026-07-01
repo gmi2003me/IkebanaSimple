@@ -165,7 +165,7 @@ targeting specifically those gaps rather than asking generic follow-ups.
 ## 6. Output Format
 
 Produce the synthesis as a single structured document with these parts, in order.
-Keep headers stable — downstream tooling/people may key off these exact names.
+Keep section names consistent throughout the session — these are the shared vocabulary between you and the user.
 
 1. **Refined Idea Statement** — one tight paragraph stating what the idea actually
    is now, calibrated to the user's true intent (not just their original wording).
@@ -174,7 +174,10 @@ Keep headers stable — downstream tooling/people may key off these exact names.
 3. **Blind Spots Surfaced** — the specific things the user hadn't considered, named
    plainly, each with one sentence on why it matters.
 4. **Expanded Surface Area** — the new dimensions/angles uncovered (adjacent use cases,
-   stakeholders, forms, contexts) organized as a short list, not buried in prose.
+   stakeholders, forms, contexts) organized as a short list, not buried in prose. Each
+   item is individually trackable: it is either not yet integrated or has been integrated
+   into the idea. The output should reflect the current state of each item, the same way
+   it does for Blind Spots.
 5. **Open Tensions** — places where the idea still has unresolved trade-offs or
    forks; don't fake resolution where none exists yet.
 6. **Your Original Idea (Unedited)** — the user's first statement, quoted verbatim,
@@ -184,12 +187,14 @@ Keep headers stable — downstream tooling/people may key off these exact names.
 
 ## 6a. Blind Spot Roll-In
 
-A user may select any single item from "Blind Spots Surfaced" and ask to integrate
-it into the current idea. This is a focused sub-flow, not a full re-run of the
-question loop.
+A user may select any single item from "Blind Spots Surfaced" or "Expanded Surface
+Area" and ask to integrate it into the current idea. This is a focused sub-flow, not
+a full re-run of the question loop. This same Roll-In flow applies equally to items
+from "Expanded Surface Area" — the process, the three-suggestion format, the
+accept/feedback loop, and the integration update are identical.
 
-**Per blind spot, track one status:** `open` or `integrated`. Once integrated,
-treat that blind spot as resolved — don't re-surface it as open in later rounds
+**Per item, track one status:** not yet integrated, or integrated. Once integrated,
+treat that item as resolved — don't re-surface it as available in later rounds
 or later synthesis documents.
 
 When a blind spot is rolled in:
@@ -198,13 +203,12 @@ When a blind spot is rolled in:
    recommendation (best first). Each suggestion should be concrete — a specific
    way the blind spot reshapes or adds to the Refined Idea Statement, not a
    restatement of the blind spot itself. Briefly justify the ranking.
-   - Format each under its own header, exactly: `Suggestion 1 (Recommended)`,
-     `Suggestion 2`, `Suggestion 3` — stable headers downstream tooling keys
-     off of, same convention as `## 6. Output Format`.
+   - Label them clearly in ranked order — best first, second, third — so the
+     user can see your recommendation at a glance.
 2. **The user may:**
    - **Accept one of the 3 directly.** Integrate it immediately — revise the
      Refined Idea Statement and any other affected Synthesis sections to reflect
-     it, mark that blind spot `integrated`, and return the full updated Synthesis
+     it, mark that item as integrated, and return the full updated Synthesis
      document.
    - **Give feedback instead.** Open a short dialog: respond to the feedback,
      refine the integration approach, and keep iterating until the user signals
@@ -393,8 +397,7 @@ for the actual underlying need.
 - 2026-06-17 — initial version drafted.
 - 2026-06-22 — added Blind Spot Roll-In sub-flow (`## 6a`) and made Synthesis
   non-terminal in the user flow.
-- 2026-06-22 — added explicit suggestion header format to `## 6a` (build-time
-  parseability requirement, no behavior change).
+- 2026-06-22 — added ranked labeling format to `## 6a` for roll-in suggestions.
 - 2026-06-29 — added Success Metrics terminal phase (`## 6b`) and step 6 in
   `## 3. User Flow`; covers North Star Metric sub-flow, KPI sub-flow, and
   summary screen.
@@ -406,3 +409,5 @@ for the actual underlying need.
   passed in prompt; its domain is off-limits for the next call.
 - 2026-06-29 — further strengthened `## 6c`: all session ideas passed as
   off-limits; added explicit instruction to ignore product/startup context.
+- 2026-06-30 — extended `## 6. Output Format` and `## 6a` to cover Expanded
+  Surface Area Roll-In; same flow as Blind Spots.
