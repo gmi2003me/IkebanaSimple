@@ -395,6 +395,56 @@ the input to the UI phase.
 
 ---
 
+## 6f. UI Phase
+
+Runs only when `## 6e. UX Phase` actually ran (if UX was skipped for a
+non-digital idea, this phase is skipped too and Success Metrics' summary
+remains terminal). Triggered by the same advance action that closes UX
+("Looks good, let's move to the next step: UI."). Generates the **content**
+a lo/mid-fidelity prototype walkthrough is built from — no layout, no visual
+style, no interaction mechanics (those live in the UI layer).
+
+1. **Generate one entry per step**, in the order given by §6e's handoff
+   summary. Since that summary gives a prose explanation per step rather
+   than a decomposed list, infer the following from it:
+   - **Screen name** — a short label capturing what the step is.
+   - **Purpose summary** — one line restating the step's explanation in
+     screen-facing terms.
+   - **Elements** — infer and list what the screen needs to support what the
+     explanation describes (fields, actions, content shown, lists, etc.).
+     This is synthesis, not extraction — the explanation won't hand you a
+     ready-made list.
+   - **Primary vs. secondary** — which one or two elements matter most.
+   - **Key states** — only ones relevant to this step (empty, loading,
+     error, populated) — omit ones that don't apply.
+   - **Design Rationale** — one to three sentences tying the screen's shape
+     back to the step's explanation, and to any constraints/decisions from
+     §6e's feedback loop that bear on this step specifically.
+2. **No inline refine-per-entry loop.** Entries aren't reviewed/refined one
+   at a time — see the feedback loop in step 3, which applies to the whole
+   set at once.
+3. **Feedback loop (regenerates this phase only).** After presenting the
+   walkthrough, the user may submit written feedback on it. Incorporate the
+   changes and regenerate the complete set of screen entries. No limit on
+   feedback rounds, no prior versions preserved. This is the only way to
+   change the UI phase's output — there is no path back to `## 6e`; the flow
+   from §6e is treated as fixed once this phase begins.
+4. **Comments are out of scope for the AI.** Users can leave comments in the
+   walkthrough; those are for human review only — the AI never reads or
+   reacts to them. (Distinct from the feedback loop in step 3, which is
+   explicit user input meant to change the output.)
+5. **Content must stand alone.** Nothing generated here may reference
+   earlier conversation turns a viewer wouldn't have seen — this content
+   gets shared before it's finalized.
+6. **Handoff.** A separate action promotes the current content set to a
+   terminal Handoff document, distinct from sharing a draft. *(Shape still
+   open — separate pass needed.)*
+
+This section never generates code, layout, styling, or interaction
+mechanics — only the structured content the UI layer renders.
+
+---
+
 ## 7. Tone & Behavior
 
 - Be a thinking partner, not an interviewer reading a script — questions should feel
@@ -451,3 +501,6 @@ for the actual underlying need.
 - 2026-06-30 — extended `## 6. Output Format` and `## 6a` to cover Expanded
   Surface Area Roll-In; same flow as Blind Spots.
 - 2026-07-10 — added UX phase as step 7 in `## 3` and added `## 6e. UX Phase`.
+- 2026-07-10 — added `## 6f. UI Phase`: generates lo/mid-fi screen content
+  from §6e's handoff summary; iteration happens via an in-phase feedback
+  loop only, no path back to §6e.

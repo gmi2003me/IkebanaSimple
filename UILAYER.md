@@ -33,7 +33,7 @@ This prompt covers **layout, phase states, and interaction patterns only.** The
 content the AI produces (questions, synthesis, etc.) is governed entirely by
 `PROMPT.md` — this file should accommodate that behavior without re-describing it.
 
-The session always moves through six phases, in this order:
+The session always moves through seven phases, in this order:
 
 1. **Intake** — the user states their idea, raw, in whatever form it arrives.
    No critique or expansion happens yet — this is just capture.
@@ -50,6 +50,9 @@ The session always moves through six phases, in this order:
    summary screen with a prompt to continue.
 6. **UX** — the AI maps the idea as a visual user flow; the user iterates via
    feedback and advances when satisfied. Skipped for non-digital ideas.
+7. **UI** — the AI turns the confirmed flow into a lo/mid-fi screen-by-screen
+   walkthrough; the user iterates via feedback within this phase. Skipped
+   whenever UX is skipped.
 
 **Success is measured against one bar:** someone unfamiliar with the product
 should be able to use the UI and always know which phase they're in, what's
@@ -91,6 +94,10 @@ Explicitly out of scope. Do not let the design drift into these:
 6. **UX** — entered from the Success Metrics summary screen. Displays a visual
    user flow diagram; the user iterates via a feedback input until satisfied,
    then advances to the UI phase. Skipped entirely for non-digital ideas.
+7. **UI** — entered from the UX phase. Displays a lo/mid-fi screen-by-screen
+   walkthrough of the confirmed flow; the user iterates via a feedback input
+   within this phase — there is no path back to UX. Skipped whenever UX is
+   skipped.
 
 Synthesis also supports an optional, repeatable **Blind Spot Roll-In sub-flow**
 (see `## 5.4`) — a branch off Synthesis, not a top-level phase. Roll-In always
@@ -106,8 +113,8 @@ silent continuation that leaves the user unsure which phase they're in.
 ## 4. Persistent UI Elements
 
 - Lightweight, always-visible indication of current phase (Intake / Questions /
-  Synthesis / Success Metrics / UX), so the user knows where they are and roughly
-  how much remains.
+  Synthesis / Success Metrics / UX / UI), so the user knows where they are and
+  roughly how much remains.
 - A way to see prior rounds/history without losing focus on the current phase.
 - During the Question Loop, a visible (not buried) way to end the loop early,
   paired with a note about what coverage gaps remain if the user does so.
@@ -235,6 +242,35 @@ top-level phase indicator.
 - Below the feedback input, a primary action: **"Looks good, let's move to the
   next step: UI."** Clicking it advances the session to the UI phase.
 
+### 5.7 UI
+
+Renders the content from `## 6f. UI Phase` (PROMPT.md) as a low-to-mid
+fidelity walkthrough — placeholder-style blocks and labels standing in for
+each Element, not a polished visual design. A review/thinking tool, not a
+demo-ready mockup. There is no path back to the UX phase from here — all
+iteration happens within this phase.
+
+- **One screen per content entry**, shown as simple wireframe-style blocks:
+  each Element appears as a labeled placeholder (a box labeled "field: idea
+  text," a labeled button, etc.), arranged by Primary/Secondary — primary
+  elements larger/first, secondary smaller/lower. No color system beyond
+  what the rest of the app already uses.
+- **Click-through navigation.** Next/Back controls move between screens in
+  step order (linear, matching the UX phase).
+- **Annotations toggle.** A single persistent toggle ("Show notes," default
+  off) reveals the Design Rationale for the current screen beneath it.
+- **Feedback input.** Below the walkthrough (not per-screen), an open text
+  input where the user describes changes. On submission, the entire set of
+  screens regenerates per `## 6f` step 3 — no prior versions preserved or
+  shown. No round limit.
+- **Comment box.** Plain text box under each screen, local-only (per `## 6f`
+  step 4) — no persistence guarantee beyond the current browser/session.
+  Distinct from the feedback input above.
+- **Share action.** Marks this walkthrough shareable as-is, whatever state
+  it's in — no separate "ready to share" gate.
+- **Send to Handoff action.** Separate from Share — promotes to the
+  terminal Handoff document. *(Depends on `## 6f` step 6, still open.)*
+
 ---
 
 ## 6. Tone & Visual Identity
@@ -286,6 +322,11 @@ top-level phase indicator.
   submitted yet
 - UX — after feedback: diagram re-rendered with updated flow, ready to iterate
   again or advance to UI
+- UI — first screen shown, click-through in progress
+- UI — annotations toggle on vs. off
+- UI — a comment entered on a screen (local only)
+- UI — feedback submitted, full regenerate has replaced the previous screen
+  set
 
 ---
 
@@ -331,3 +372,6 @@ A copy/export control sits at the top or bottom of the document.
   `## 5.3` and two new states to `## 7`.
 - 2026-07-10 — added UX as phase 6: updated `## 1`, `## 3`, `## 4`, `## 5.5`
   summary screen, added `## 5.6`, and two new states to `## 7`.
+- 2026-07-10 — added UI as phase 7: updated `## 1`, `## 3`, `## 4`, added
+  `## 5.7` (lo/mid-fi walkthrough, in-phase feedback loop, no return to UX),
+  and four new states to `## 7`.
