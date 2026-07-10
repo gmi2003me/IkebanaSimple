@@ -33,7 +33,7 @@ This prompt covers **layout, phase states, and interaction patterns only.** The
 content the AI produces (questions, synthesis, etc.) is governed entirely by
 `PROMPT.md` — this file should accommodate that behavior without re-describing it.
 
-The session always moves through five phases, in this order:
+The session always moves through six phases, in this order:
 
 1. **Intake** — the user states their idea, raw, in whatever form it arrives.
    No critique or expansion happens yet — this is just capture.
@@ -47,7 +47,9 @@ The session always moves through five phases, in this order:
    original idea, quoted verbatim, so the delta is visible without scrolling back.
 5. **Success Metrics** — the user defines one North Star Metric and exactly three
    KPIs, guided by AI recommendations drawn from the session, ending in a
-   read-only summary screen.
+   summary screen with a prompt to continue.
+6. **UX** — the AI maps the idea as a visual user flow; the user iterates via
+   feedback and advances when satisfied. Skipped for non-digital ideas.
 
 **Success is measured against one bar:** someone unfamiliar with the product
 should be able to use the UI and always know which phase they're in, what's
@@ -84,8 +86,11 @@ Explicitly out of scope. Do not let the design drift into these:
 4. **Comparison** — not a separate screen; the final section *within* Synthesis,
    visually marked as a quoted/verbatim artifact distinct from the AI's prose.
 5. **Success Metrics** — a two-part guided selection flow (North Star Metric,
-   then KPIs), followed by a terminal summary screen. Entered from Synthesis
-   once the user is done with any Roll-Ins; does not return to Synthesis.
+   then KPIs), followed by a summary screen. Entered from Synthesis once the
+   user is done with any Roll-Ins; does not return to Synthesis.
+6. **UX** — entered from the Success Metrics summary screen. Displays a visual
+   user flow diagram; the user iterates via a feedback input until satisfied,
+   then advances to the UI phase. Skipped entirely for non-digital ideas.
 
 Synthesis also supports an optional, repeatable **Blind Spot Roll-In sub-flow**
 (see `## 5.4`) — a branch off Synthesis, not a top-level phase. Roll-In always
@@ -101,7 +106,7 @@ silent continuation that leaves the user unsure which phase they're in.
 ## 4. Persistent UI Elements
 
 - Lightweight, always-visible indication of current phase (Intake / Questions /
-  Synthesis / Success Metrics), so the user knows where they are and roughly
+  Synthesis / Success Metrics / UX), so the user knows where they are and roughly
   how much remains.
 - A way to see prior rounds/history without losing focus on the current phase.
 - During the Question Loop, a visible (not buried) way to end the loop early,
@@ -200,7 +205,8 @@ top-level phase indicator.
   - North Star Metric, clearly labeled, in a visually prominent treatment.
   - Three KPIs listed in selection order, numbered, below the NSM.
 - A copy/export action for the full summary content.
-- This is the terminal state of the session. No navigation forward is offered.
+- A primary action advances the session to the UX phase. If the UX phase is
+  skipped (non-digital idea), this becomes the terminal state of the session.
 
 ### 5.4 Blind Spot Roll-In (sub-flow off Synthesis)
 - Clicking "Roll this into my idea" navigates to a dedicated Roll-In page —
@@ -217,6 +223,17 @@ top-level phase indicator.
   shows "This has been integrated" instead of its link.
 - A visible way to abandon the Roll-In and return to Synthesis unchanged,
   for users who start the flow and decide not to integrate after all.
+
+### 5.6 UX
+
+- The user flow is displayed as a visual diagram: each step shown as a labeled
+  rectangle, connected by directional arrows in sequence, rendered inline on
+  the page.
+- Below the diagram, an open text input where the user can describe changes to
+  the flow. On submission, the page re-renders with the updated diagram. No
+  prior versions of the diagram are preserved or shown.
+- Below the feedback input, a primary action: **"Looks good, let's move to the
+  next step: UI."** Clicking it advances the session to the UI phase.
 
 ---
 
@@ -265,6 +282,10 @@ top-level phase indicator.
 - Expanded Surface Area items, all open: all showing "Roll this into my idea"
 - Expanded Surface Area items, mixed: some showing "Roll this into my idea,"
   others showing "This has been integrated."
+- UX — initial display: flow diagram visible, feedback input open, no feedback
+  submitted yet
+- UX — after feedback: diagram re-rendered with updated flow, ready to iterate
+  again or advance to UI
 
 ---
 
@@ -308,3 +329,5 @@ A copy/export control sits at the top or bottom of the document.
   two new states to `## 7`.
 - 2026-06-30 — added Roll-In behavior to Expanded Surface Area items in
   `## 5.3` and two new states to `## 7`.
+- 2026-07-10 — added UX as phase 6: updated `## 1`, `## 3`, `## 4`, `## 5.5`
+  summary screen, added `## 5.6`, and two new states to `## 7`.
