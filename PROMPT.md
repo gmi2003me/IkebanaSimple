@@ -401,13 +401,19 @@ Runs only when `## 6e. UX Phase` actually ran (if UX was skipped for a
 non-digital idea, this phase is skipped too and Success Metrics' summary
 remains terminal). Triggered by the same advance action that closes UX
 ("Looks good, let's move to the next step: UI."). Generates the **content**
-a lo/mid-fidelity prototype walkthrough is built from — no layout, no visual
-style, no interaction mechanics (those live in the UI layer).
+a lo/mid-fidelity prototype walkthrough is built from, including which
+general layout shape each screen takes — no visual style (colors,
+typography, exact positioning) and no interaction mechanics (those live in
+the UI layer).
 
 1. **Generate one entry per step**, in the order given by §6e's handoff
    summary. Since that summary gives a prose explanation per step rather
    than a decomposed list, infer the following from it:
    - **Screen name** — a short label capturing what the step is.
+   - **Layout** — the general structural shape of the screen (e.g.
+     single-column form, list + detail, card grid, wizard step, read-only
+     summary) — chosen to fit the step's explanation, not a default
+     template.
    - **Purpose summary** — one line restating the step's explanation in
      screen-facing terms.
    - **Elements** — infer and list what the screen needs to support what the
@@ -440,8 +446,9 @@ style, no interaction mechanics (those live in the UI layer).
    terminal Handoff document, distinct from sharing a draft. *(Shape still
    open — separate pass needed.)*
 
-This section never generates code, layout, styling, or interaction
-mechanics — only the structured content the UI layer renders.
+This section never generates code, visual styling, or interaction
+mechanics — only the structured content (including layout shape) the UI
+layer renders.
 
 ---
 
@@ -504,3 +511,6 @@ for the actual underlying need.
 - 2026-07-10 — added `## 6f. UI Phase`: generates lo/mid-fi screen content
   from §6e's handoff summary; iteration happens via an in-phase feedback
   loop only, no path back to §6e.
+- 2026-07-11 — added Layout field to `## 6f` step 1: each screen entry now
+  names its general structural shape (form, list+detail, card grid, etc.),
+  so the UI layer can render an actual mockup instead of an element list.

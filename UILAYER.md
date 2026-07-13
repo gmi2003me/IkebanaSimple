@@ -152,8 +152,12 @@ silent continuation that leaves the user unsure which phase they're in.
     needed.
 
 ### 5.2 Question Loop
-- A grouped-answer input: the user answers a full batch of questions, then
-  submits the round as a unit, not question-by-question.
+- Each question in the round is immediately followed by its own answer box —
+  question 1, its answer box, question 2, its answer box, and so on down the
+  page. Never group all the questions together first with the answer boxes
+  stacked separately afterward; the pairing must be visually adjacent.
+- Still a grouped-answer submission: even though each question has its own
+  box, the whole round submits as one unit, not question-by-question.
 - User can answer in whatever order/format feels natural; short answers are fine.
 - Explicit "end the loop now" action, distinct from just submitting an empty round.
 
@@ -233,28 +237,52 @@ top-level phase indicator.
 
 ### 5.6 UX
 
-- The user flow is displayed as a visual diagram: each step shown as a labeled
-  rectangle, connected by directional arrows in sequence, rendered inline on
-  the page.
-- Below the diagram, an open text input where the user can describe changes to
-  the flow. On submission, the page re-renders with the updated diagram. No
-  prior versions of the diagram are preserved or shown.
-- Below the feedback input, a primary action: **"Looks good, let's move to the
-  next step: UI."** Clicking it advances the session to the UI phase.
+- The flow diagram renders inside its own canvas container — a plain white
+  area holding nothing but the diagram itself (each step as a labeled
+  rectangle, connected by directional arrows in sequence). No feedback
+  input, no buttons, no other chrome inside this container — it reads as a
+  workspace holding the artifact, not a card full of controls.
+- Below and outside the canvas container, directly on the page background:
+  an open text input where the user can describe changes to the flow. On
+  submission, the canvas re-renders with the updated diagram. No prior
+  versions of the diagram are preserved or shown.
+- Below the feedback input, still outside the canvas: a primary action,
+  **"Looks good, let's move to the next step: UI."** Clicking it advances
+  the session to the UI phase.
 
 ### 5.7 UI
 
-Renders the content from `## 6f. UI Phase` (PROMPT.md) as a low-to-mid
-fidelity walkthrough — placeholder-style blocks and labels standing in for
-each Element, not a polished visual design. A review/thinking tool, not a
-demo-ready mockup. There is no path back to the UX phase from here — all
-iteration happens within this phase.
+Renders the content from `## 6f. UI Phase` (PROMPT.md) as an actual
+low-to-mid fidelity mockup — not a polished visual design, but also not a
+text description of the screen. A review/thinking tool that should still
+read as a screen at a glance. There is no path back to the UX phase from
+here — all iteration happens within this phase.
 
-- **One screen per content entry**, shown as simple wireframe-style blocks:
-  each Element appears as a labeled placeholder (a box labeled "field: idea
-  text," a labeled button, etc.), arranged by Primary/Secondary — primary
-  elements larger/first, secondary smaller/lower. No color system beyond
-  what the rest of the app already uses.
+- The current screen's mockup renders inside its own canvas container — a
+  plain white area holding nothing but that one screen's mockup and its
+  fixed viewport (see below). Every other control — screen indicator, the
+  notes toggle, Back/Next navigation, Design Rationale panel, comment box,
+  feedback input, Share, Send to Handoff — sits below and outside the
+  canvas container, directly on the page background. Same pattern as
+  `## 5.6 UX`: the canvas holds only the artifact being reviewed, not the
+  controls for reviewing it.
+- The canvas has a fixed width that stays constant across every screen in
+  the walkthrough — it does not grow or shrink to fit however much content
+  a given screen happens to have. Content wraps/reflows within that fixed
+  width instead. This is what makes the walkthrough read as one consistent
+  device/viewport being clicked through, rather than a series of
+  differently-sized boxes.
+- **One screen per content entry**, rendered as an actual lo/mid-fidelity
+  mockup arranged per the screen's Layout (form, list + detail, card grid,
+  wizard step, summary, etc.) — not a list describing the elements. Each
+  Element renders as the real-looking control it represents (an input box
+  with its label, a clickable-looking button with its text, a list with
+  rows, a toggle switch) — someone looking at it should recognize a screen,
+  not read a spec. Primary elements are visually emphasized (larger, first,
+  or more prominent); secondary elements are smaller/later. Still lo/mid-fi:
+  no color system beyond what the rest of the app uses, no icons or
+  imagery, no pixel-perfect spacing — just enough visual structure to look
+  and feel like the screen it represents.
 - **Click-through navigation.** Next/Back controls move between screens in
   step order (linear, matching the UX phase).
 - **Annotations toggle.** A single persistent toggle ("Show notes," default
@@ -280,6 +308,15 @@ iteration happens within this phase.
 - Typography-forward, especially in Synthesis, where the document is the focus.
 - Minimal color, generous whitespace, no decorative chrome competing with the
   content being produced.
+- UX and UI use a noticeably wider content container than every other phase.
+  Those two phases are visual/spatial (a flow diagram, a grid of screens) —
+  the narrow reading-width column that suits Synthesis or the Question Loop
+  actively cramps them. Every other phase keeps the narrower, reading-width
+  container. Within the wider UX/UI container, prose elements (purpose text,
+  Design Rationale, feedback inputs) should still be capped at a narrower
+  reading width, rather than stretched edge-to-edge — width should follow
+  what's actually being displayed, not apply uniformly to everything on the
+  screen.
 
 ---
 
@@ -375,3 +412,14 @@ A copy/export control sits at the top or bottom of the document.
 - 2026-07-10 — added UI as phase 7: updated `## 1`, `## 3`, `## 4`, added
   `## 5.7` (lo/mid-fi walkthrough, in-phase feedback loop, no return to UX),
   and four new states to `## 7`.
+- 2026-07-11 — rewrote `## 5.7`: screens now render as actual mockups
+  (real-looking inputs/buttons/lists arranged per Layout) instead of
+  labeled-placeholder element lists.
+- 2026-07-12 — added wider content container rule for UX/UI phases to
+  `## 6`; other phases keep the narrower reading-width container.
+- 2026-07-13 — established canvas/chrome split for `## 5.6`/`## 5.7` (all
+  controls sit below the canvas, not inside it) and a fixed, constant
+  canvas width across every UI screen.
+- 2026-07-13 — clarified `## 5.2`: each question must be immediately
+  followed by its own answer box (interleaved), not grouped separately from
+  a stacked list of answer boxes.
