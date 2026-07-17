@@ -94,6 +94,21 @@ inferred from or overwritten by this file.
 
 ---
 
+## 4a. External Dependencies
+
+When the build includes external CSS or JS loaded from a CDN, apply these rules:
+
+- **Tailwind CSS CDN** — always disable Tailwind's preflight reset immediately
+  after the CDN script tag. Preflight strips default browser styling from base
+  HTML elements, which overrides the app shell's custom CSS for buttons, inputs,
+  and other elements. Disabling it allows Tailwind utility classes to work for
+  mockup rendering while leaving the app shell's own styles intact.
+- Any other CDN dependency that includes a CSS reset or base stylesheet must be
+  similarly scoped to avoid overriding the app shell's styles — ask before adding
+  a new one if the impact is unclear.
+
+---
+
 ## 5. Deploy Trigger
 
 - Triggered **only** when the literal word **"deploy"** also appears (in the
@@ -161,3 +176,5 @@ to these files must follow these rules:
   `## 4. Build Trigger` (no separate component files/templates/stylesheets).
 - 2026-06-30 — added `## 8. Editing Standards` to codify Prompt As Artifact
   editing rules for all source files.
+- 2026-07-16 — added `## 4a. External Dependencies`: Tailwind CDN preflight
+  must be disabled to prevent it from overriding the app shell's custom CSS.
