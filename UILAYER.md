@@ -275,14 +275,20 @@ here — all iteration happens within this phase.
 - **One screen per content entry**, rendered as an actual lo/mid-fidelity
   mockup arranged per the screen's Layout (form, list + detail, card grid,
   wizard step, summary, etc.) — not a list describing the elements. Each
-  Element renders as the real-looking control it represents (an input box
-  with its label, a clickable-looking button with its text, a list with
-  rows, a toggle switch) — someone looking at it should recognize a screen,
-  not read a spec. Primary elements are visually emphasized (larger, first,
-  or more prominent); secondary elements are smaller/later. Still lo/mid-fi:
-  no color system beyond what the rest of the app uses, no icons or
-  imagery, no pixel-perfect spacing — just enough visual structure to look
-  and feel like the screen it represents.
+  Element renders using the shadcn component for its control type: Input
+  for open text; Textarea for multi-line; Select for dropdowns (label
+  above, chevron in the field, options list on open); RadioGroup with
+  RadioGroupItem for radio groups (stacked options, circular indicators);
+  a set of Checkbox items under a group label for checkbox groups; a single
+  Checkbox with inline label for binary confirmations; Switch with its label
+  for toggles; Input with numeric styling for number inputs; Input with a
+  date placeholder for date inputs; Button in its primary variant for
+  primary elements and outline variant for secondary; a bordered list with
+  2–3 placeholder rows for lists. Controls render in their resting/default
+  visual state — these are lo/mid-fi previews, not interactive. Someone
+  looking at the canvas should recognize a screen, not read a spec. Primary
+  elements are visually emphasized (larger, first, or more prominent);
+  secondary elements are smaller/later.
 - **Click-through navigation.** Next/Back controls move between screens in
   step order (linear, matching the UX phase).
 - **Annotations toggle.** A single persistent toggle ("Show notes," default
@@ -423,3 +429,6 @@ A copy/export control sits at the top or bottom of the document.
 - 2026-07-13 — clarified `## 5.2`: each question must be immediately
   followed by its own answer box (interleaved), not grouped separately from
   a stacked list of answer boxes.
+- 2026-07-13 — updated `## 5.7` mockup rendering: each element now renders
+  using its shadcn component (Input, Textarea, Select, RadioGroup, Checkbox,
+  Switch, Button, etc.) in resting/default visual state via Tailwind CDN.

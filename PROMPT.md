@@ -420,6 +420,28 @@ the UI layer).
      explanation describes (fields, actions, content shown, lists, etc.).
      This is synthesis, not extraction — the explanation won't hand you a
      ready-made list.
+   - **Control type** — for each element, name the most appropriate control
+     for what it collects or does. Choose deliberately:
+     - Radio group — user picks exactly one from 2–5 options, and seeing all
+       options at once helps them compare (frequency, tier, mode, etc.).
+     - Dropdown — user picks exactly one from a longer list (5+ options), or
+       options are too long to display all at once.
+     - Checkbox group — user may select any number from a set (zero, some,
+       or all are all valid).
+     - Checkbox — one binary confirmation that submits together with a form
+       (agree to terms, opt-in, etc.).
+     - Toggle — a single on/off setting that takes immediate effect, not
+       tied to a form submit action.
+     - Open text input — only when the answer is genuinely unconstrained
+       (name, search, free entry). If the answer can be enumerated in 5 or
+       fewer options, use a radio group instead.
+     - Textarea — when the user needs to write more than one sentence
+       (description, notes, feedback, reason).
+     - Number input — the value must be numeric and quantitative.
+     - Date input — the value is a calendar date.
+     Never use a dropdown for fewer than 3 options when space allows — use
+     a radio group. Never use a radio group for more than 5 options — use
+     a dropdown.
    - **Primary vs. secondary** — which one or two elements matter most.
    - **Key states** — only ones relevant to this step (empty, loading,
      error, populated) — omit ones that don't apply.
@@ -514,3 +536,6 @@ for the actual underlying need.
 - 2026-07-11 — added Layout field to `## 6f` step 1: each screen entry now
   names its general structural shape (form, list+detail, card grid, etc.),
   so the UI layer can render an actual mockup instead of an element list.
+- 2026-07-13 — added Control type to `## 6f` step 1: nine specific control
+  types with selection criteria, replacing the generic "fields, actions"
+  guidance.
