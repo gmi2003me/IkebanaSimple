@@ -464,9 +464,66 @@ the UI layer).
 5. **Content must stand alone.** Nothing generated here may reference
    earlier conversation turns a viewer wouldn't have seen — this content
    gets shared before it's finalized.
-6. **Handoff.** A separate action promotes the current content set to a
-   terminal Handoff document, distinct from sharing a draft. *(Shape still
-   open — separate pass needed.)*
+6. **Handoff.** A separate action ("Send to Handoff") promotes the
+   current content set to two terminal documents at once, both shown to
+   the user side by side for download — frozen at the moment of
+   promotion, with no further feedback loop or regeneration on either.
+   Both draw from the same underlying content set (Idea Summary, Flow
+   Overview, Screens, Success Metrics, Constraints & Decisions); they
+   differ only in audience and framing, not in substance — nothing
+   appears in one that isn't in the other.
+
+   **6a. PRD** — written for a human reader who wasn't in the room for any
+   prior phase.
+   - **Idea Summary** — one paragraph restating the refined idea (the
+     Synthesis phase's Refined Idea Statement).
+   - **Flow Overview** — the ordered step list and explanations, as
+     produced by §6e's handoff summary.
+   - **Screens** — one section per screen entry from step 1: the rendered
+     mockup from `## 5.7` (the actual lo/mid-fi canvas, not a re-drawn
+     version), followed by Screen name, Layout, Purpose summary, Elements
+     (primary/secondary marked), Key states, and Design Rationale as text
+     beneath it.
+   - **Success Metrics** — the confirmed North Star Metric and 3 KPIs
+     from §6b, carried through unchanged.
+   - **Constraints & Decisions** — consolidated from both the UX phase's
+     feedback loop (§6e) and this phase's feedback loop (step 3).
+   - **Export** — markdown (mockup images embedded as linked assets) or
+     PDF (mockup images embedded inline — this is the format PDF actually
+     exists for).
+
+   **6b. Agent Prompt** — the same content set, restructured as build
+   instructions for an autonomous coding agent (Claude Code, Cursor, etc.)
+   with no other context. Written in imperative voice, addressed to the
+   agent, not summarized for a reader:
+   - **Objective** — one paragraph: what to build and why, drawn from the
+     Idea Summary.
+   - **User Flow** — the ordered steps as a numbered build sequence, not
+     prose narration.
+   - **Screens to Build** — one section per screen, each stated as a build
+     directive: Screen name, Layout (as an explicit structural
+     instruction — "render as form", "render as list+detail" — not a
+     label), Elements with primary/secondary called out as build
+     priority, Key states the agent must implement, and any Design
+     Rationale that constrains implementation choices (kept only where it
+     changes what the agent should build, not as background). Text only —
+     no mockup image and no wireframe; the agent gets everything through
+     the structured directives above, not a visual reference.
+   - **Success Metrics** — the North Star Metric and 3 KPIs from §6b,
+     stated as what the build should ultimately be measured against (so
+     the agent understands intent behind ambiguous calls, not just the
+     spec).
+   - **Constraints** — stated as hard rules the agent must not violate,
+     not as a decisions log. Historical "why" is dropped unless it
+     changes what to build.
+   - No tech stack is imposed unless a constraint explicitly names one —
+     the agent chooses framework/libraries freely within the stated
+     screens and constraints.
+   - **Export** — markdown only (this document is meant to be pasted
+     directly into an agent's context, not read as a formatted doc).
+
+   Once promoted, neither document regenerates — further changes start a
+   new working session, not this one.
 
 This section never generates code, visual styling, or interaction
 mechanics — only the structured content (including layout shape) the UI
@@ -539,3 +596,8 @@ for the actual underlying need.
 - 2026-07-13 — added Control type to `## 6f` step 1: nine specific control
   types with selection criteria, replacing the generic "fields, actions"
   guidance.
+- 2026-07-19 — defined `## 6f` step 6 (Handoff): two terminal documents,
+  PRD (6a) and Agent Prompt (6b), both drawing from the same content set
+  plus Success Metrics. PRD embeds the `## 5.7` mockups and exports as
+  markdown or PDF; Agent Prompt is text-only build instructions, markdown
+  export only. Confirmed with George.

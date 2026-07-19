@@ -303,7 +303,55 @@ here — all iteration happens within this phase.
 - **Share action.** Marks this walkthrough shareable as-is, whatever state
   it's in — no separate "ready to share" gate.
 - **Send to Handoff action.** Separate from Share — promotes to the
-  terminal Handoff document. *(Depends on `## 6f` step 6, still open.)*
+  terminal Handoff documents (see `## 5.8`) and navigates there.
+
+### 5.8 Handoff
+
+Renders both terminal documents from `## 6f` step 6 (PROMPT.md) —
+the PRD and the Agent Prompt — as a **tabbed pair**, landing on the PRD
+tab by default. The terminal artifact of the session, meant for someone
+who wasn't in the room for any prior phase. Read-only throughout: no
+feedback input, no comment boxes, no Back/Next. There is no path back to
+`## 5.6` or `## 5.7` from here — starting over means a new session.
+
+- **Tab switcher** at the top: "PRD" / "Agent Prompt" — switching tabs
+  swaps the reading pane below; both documents are already generated
+  at promotion, so switching is instant, not a regeneration.
+- Uses the narrow reading-width container, like Synthesis, for **both**
+  tabs — a document, not a spatial artifact like the UX/UI phases that
+  produced it.
+
+**PRD tab**
+- **Idea Summary** and **Flow Overview** render as prose/list sections at
+  the top, same typographic treatment as Synthesis.
+- **Screens** render as a sequence of sections, one per screen — the
+  actual rendered `## 5.7` mockup image at the top of each section,
+  followed by Screen name, Layout, Purpose, Elements (primary/secondary
+  marked), Key states, and Design Rationale as text beneath it.
+- **Success Metrics** renders as its own section — North Star Metric
+  labeled prominently, then the 3 KPIs listed below it — same treatment
+  as the Success Metrics summary screen (`## 5.5`).
+- **Constraints & Decisions** render as a plain list at the end.
+- **Share action.** Marks the document shareable as-is.
+- **Export action.** Offers **Markdown** (mockup images as linked
+  assets) or **PDF** (mockup images embedded inline) — PDF is PRD-only,
+  not available on the Agent Prompt tab.
+
+**Agent Prompt tab**
+- Renders in a monospace/code-block treatment rather than prose
+  typography — this is meant to be copied into an agent's context
+  verbatim, not read as a formatted document.
+- **Objective**, **User Flow**, **Screens to Build**, **Success
+  Metrics**, and **Constraints** render as plain sequential sections in
+  the imperative-voice structure defined in `## 6f` step 6b — no visual
+  distinction between "sections" beyond markdown headers, since the
+  agent reads raw text. No mockup image and no wireframe anywhere on
+  this tab — mockups are PRD-only.
+- **Copy action** — one-click copy-to-clipboard, in addition to Share
+  and Export, since this document's primary use case is pasting into a
+  chat window rather than downloading.
+- **Share action.** Same meaning as PRD tab.
+- **Export action.** Markdown only — no PDF option on this tab.
 
 ---
 
@@ -432,3 +480,6 @@ A copy/export control sits at the top or bottom of the document.
 - 2026-07-13 — updated `## 5.7` mockup rendering: each element now renders
   using its shadcn component (Input, Textarea, Select, RadioGroup, Checkbox,
   Switch, Button, etc.) in resting/default visual state via Tailwind CDN.
+- 2026-07-19 — added `## 5.8 Handoff`: tabbed PRD/Agent Prompt pair. PRD
+  embeds `## 5.7` mockups, exports as markdown or PDF; Agent Prompt is
+  monospace text-only with a Copy action, markdown export only.
